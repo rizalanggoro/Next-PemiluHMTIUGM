@@ -14,6 +14,7 @@ export default async function Page() {
   console.log({ baseUrl });
   const response = await fetch(baseUrl + "api/dashboard/voter", {
     method: "GET",
+    cache: "no-store",
   });
 
   if (!response.ok) {
