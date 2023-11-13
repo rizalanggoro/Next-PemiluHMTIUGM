@@ -11,6 +11,7 @@ import { UserX2 } from "lucide-react";
 
 export default async function Page() {
   const baseUrl = process.env.BASE_URL;
+  console.log({ baseUrl });
   const response = await fetch(baseUrl + "api/dashboard/voter", {
     method: "GET",
   });
