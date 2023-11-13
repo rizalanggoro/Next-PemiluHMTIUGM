@@ -1,9 +1,9 @@
-import ClientHome from "./client";
+import DashboardClient from "./client";
 
 export default function Page() {
   return (
     <>
-      <ClientHome />
+      <DashboardClient />
     </>
   );
 }
