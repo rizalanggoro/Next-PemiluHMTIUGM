@@ -27,7 +27,28 @@ const detaGet = async (params: { baseName: string; key: string }) => {
   }
 };
 
-const detaInsert = async (params: { baseName: string; payload: any }) => {};
+const detaInsert = async (params: { baseName: string; payload: any }) => {
+  try {
+    const response = await fetch(detaBaseUrl + params.baseName + "/items", {
+      method: "POST",
+      headers,
+      body: params.payload,
+    });
+
+    if (!response.ok) {
+      const { statusText } = response;
+      throw { message: statusText };
+    }
+
+    return response;
+  } catch (e) {
+    const { message } = e as any;
+    return new Response(message, {
+      status: 500,
+      statusText: message,
+    });
+  }
+};
 
 const detaQuery = async (params: { baseName: string; payload: any }) => {
   try {

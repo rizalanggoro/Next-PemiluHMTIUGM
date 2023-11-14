@@ -2,7 +2,7 @@
 
 import Navbar from "@/components/navbar";
 import { Button } from "@/components/ui/button";
-import { Home, UploadCloud, Users2, Vote } from "lucide-react";
+import { Home, Users2, Vote } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 type DashboardMenuItem = {
@@ -23,11 +23,11 @@ export default function DashboardLayout({
       href: "/dashboard/voter",
       icon: <Users2 className="h-4 w-4" />,
     },
-    {
-      title: "Unggah pemilih",
-      href: "/dashboard/voter/upload",
-      icon: <UploadCloud className="h-4 w-4" />,
-    },
+    // {
+    //   title: "Unggah pemilih",
+    //   href: "/dashboard/voter/upload",
+    //   icon: <UploadCloud className="h-4 w-4" />,
+    // },
     {
       title: "Hasil pemilihan",
       href: "/dashboard/result",
