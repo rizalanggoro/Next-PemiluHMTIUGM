@@ -4,6 +4,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, LogIn } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface LoginErrorMessage {
@@ -17,6 +18,7 @@ export default function HomeClient() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const router = useRouter();
 
   const login = async () => {
     setErrorMessage("");
@@ -30,7 +32,7 @@ export default function HomeClient() {
     });
 
     if (response.ok) {
-      console.log("success");
+      router.replace("/vote");
     } else {
       const { status } = response;
       const messages: LoginErrorMessage = {

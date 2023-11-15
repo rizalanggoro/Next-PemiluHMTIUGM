@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function DashboardVoterClient() {
@@ -42,9 +43,14 @@ export default function DashboardVoterClient() {
 
       <Table className="mt-4">
         <TableCaption>
-          <p>Total data: {voters.length}</p>
-          <Button onClick={() => loadVoters()} className="mt-2">
-            Muat lainnya
+          <p>Terdapat {voters.length} pemilih</p>
+          <Button
+            onClick={() => loadVoters()}
+            className="mt-2"
+            disabled={isLoading}
+          >
+            {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+            {isLoading ? "Mengambil data..." : "Muat lainnya"}
           </Button>
         </TableCaption>
         <TableHeader>
@@ -62,7 +68,6 @@ export default function DashboardVoterClient() {
               <TableCell>{item.accessCode}</TableCell>
             </TableRow>
           ))}
-          {isLoading && <p>Loading...</p>}
         </TableBody>
       </Table>
     </>

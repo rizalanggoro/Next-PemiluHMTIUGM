@@ -5,7 +5,7 @@ import { tokenVerify } from "./lib/jwt";
 export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname === "/vote") {
     try {
-      const loginSession = cookies().get("login-session");
+      const loginSession = cookies().get("voter-token");
       console.log({ loginSession });
       if (!loginSession) throw "middleware: login session not found!";
 
