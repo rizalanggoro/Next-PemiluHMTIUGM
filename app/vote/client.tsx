@@ -10,6 +10,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { JWTVerifyResult } from "jose";
 import { CheckCheck } from "lucide-react";
 import { useState } from "react";
@@ -36,10 +45,41 @@ export default function VoteClient(params: { token: JWTVerifyResult }) {
   return (
     <>
       <Navbar>
-        <Button disabled={selectedIndex == -1}>
-          <CheckCheck className="w-4 h-4 mr-2" />
-          Konfirmasi
-        </Button>
+        <Dialog>
+          <DialogTrigger disabled={selectedIndex == -1}>
+            <Button disabled={selectedIndex == -1}>
+              <CheckCheck className="w-4 h-4 mr-2" />
+              Konfirmasi
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Konfirmasi Pilihan Anda</DialogTitle>
+              <DialogDescription>
+                Saya{" "}
+                <span className="font-semibold">
+                  {(params.token.payload as any).name}
+                </span>{" "}
+                dengan NIU{" "}
+                <span className="font-semibold">
+                  {(params.token.payload as any).niu}
+                </span>{" "}
+                memilih{" "}
+                <span className="font-semibold">
+                  {candidates.at(selectedIndex)?.title}
+                </span>{" "}
+                sebagai Ketua dan Wakil Ketua Himpunan Mahasiswa Teknik
+                Industri.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button>
+                <CheckCheck className="w-4 h-4 mr-2" />
+                Konfirmasi
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </Navbar>
 
       <div className="pt-[4.375rem] max-w-[768px] mx-auto px-4">

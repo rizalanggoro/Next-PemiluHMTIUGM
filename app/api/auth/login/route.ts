@@ -22,9 +22,21 @@ export async function POST(request: Request) {
       };
 
     const token = await tokenGenerate(json);
-    cookies().set("voter-token", token);
+    cookies().set("voter-token", token, {
+      maxAge: 60 * 60,
+      httpOnly: true,
+    });
 
     return new Response("OK");
+
+    // return new Response("OK", {
+    //   headers: {
+    //     "set-cookie": serialize("voter-token", token, {
+    //       path: "/",
+    //       httpOnly: true,
+    //     }),
+    //   },
+    // });
   } catch (e) {
     const { status, statusText } = e as APIErrorInterface;
     return new Response(statusText, {
