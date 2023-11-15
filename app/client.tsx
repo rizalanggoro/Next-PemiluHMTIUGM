@@ -7,7 +7,7 @@ import { Loader2, LogIn } from "lucide-react";
 import { useState } from "react";
 
 interface LoginErrorMessage {
-  [key: string]: string;
+  [key: number]: string;
 }
 
 export default function HomeClient() {
@@ -32,12 +32,12 @@ export default function HomeClient() {
     if (response.ok) {
       console.log("success");
     } else {
-      const { statusText } = response;
+      const { status } = response;
       const messages: LoginErrorMessage = {
-        "not found": "Akun dengan NIU tersebut tidak ditemukan!",
-        "invalid access code": "Kode akses yang Anda masukkan tidak valid!",
+        404: "Akun dengan NIU tersebut tidak ditemukan!",
+        401: "Kode akses yang Anda masukkan tidak valid!",
       };
-      setErrorMessage(messages[statusText.toLowerCase()]);
+      setErrorMessage(messages[status]);
     }
     setIsLoading(false);
   };
