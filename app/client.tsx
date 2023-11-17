@@ -38,71 +38,88 @@ export default function HomeClient() {
       const messages: LoginErrorMessage = {
         404: "Akun dengan NIU tersebut tidak ditemukan!",
         401: "Kode akses yang Anda masukkan tidak valid!",
+        403: "Suara Anda telah digunakan sebelumnya!",
       };
       setErrorMessage(messages[status]);
     }
     setIsLoading(false);
   };
 
+  const listLogo: Array<{ href: string }> = [
+    { href: "./dpo-hmti.png" },
+    { href: "./lambang-hmti.png" },
+    { href: "./logo-kpu.png" },
+  ];
+
   return (
     <>
       <div className="grid grid-cols-12 h-screen overflow-hidden">
-        <div className="col-span-4 relative overflow-hidden border-r border">
-          <img
-            src="https://images.unsplash.com/photo-1567201864585-6baec9110dac?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            className="absolute h-screen w-full object-cover"
-          />
-          <p className="absolute bottom-0 m-8 text-4xl font-semibold leading-tight">
-            Pemilihan Ketua dan Wakil Ketua Himpunan Teknik Industri UGM
-          </p>
-        </div>
-        <div className="col-span-8 flex items-center">
-          <div className="px-8 max-w-[512px] mx-auto">
-            <p className="font-bold text-3xl mt-8">Masuk</p>
-            <p>Masukkan NIU dan kode akses untuk melanjutkan</p>
-            <Input
-              className="mt-8 w-full"
-              value={voter.niu}
-              onChange={(event) =>
-                setVoter({
-                  ...voter,
-                  niu: event.target.value,
-                })
-              }
-              type="text"
-              placeholder="NIU"
-            />
-            <Input
-              className="mt-2"
-              value={voter.accessCode}
-              onChange={(event) =>
-                setVoter({
-                  ...voter,
-                  accessCode: event.target.value,
-                })
-              }
-              type="password"
-              placeholder="Kode Akses"
-            />
+        <div className="col-span-7 flex items-center">
+          <div className="px-8 max-w-[768px] mx-auto w-full">
+            <div className="flex gap-4 absolute top-0 my-8">
+              {listLogo.map((item) => (
+                <img src={item.href} className="h-8 object-contain" />
+              ))}
+            </div>
+            <p className="font-bold text-5xl mt-8 leading-normal">
+              Pemilu HMTI UGM <br />
+              Periode 2024
+            </p>
+            <p className="mt-4 text-lg text-slate-600">
+              Masukkan NIU dan kode akses untuk melanjutkan
+            </p>
+            <div className="max-w-[512px]">
+              <Input
+                className="mt-8 w-full"
+                value={voter.niu}
+                onChange={(event) =>
+                  setVoter({
+                    ...voter,
+                    niu: event.target.value,
+                  })
+                }
+                type="text"
+                placeholder="NIU"
+              />
+              <Input
+                className="mt-2"
+                value={voter.accessCode}
+                onChange={(event) =>
+                  setVoter({
+                    ...voter,
+                    accessCode: event.target.value,
+                  })
+                }
+                type="password"
+                placeholder="Kode Akses"
+              />
 
-            {/* alert */}
-            {errorMessage && (
-              <Alert variant={"destructive"} className="mt-8">
-                <AlertTitle>Terjadi kesalahan!</AlertTitle>
-                <AlertDescription>{errorMessage}</AlertDescription>
-              </Alert>
-            )}
+              {/* alert */}
+              {errorMessage && (
+                <Alert variant={"destructive"} className="mt-8">
+                  <AlertTitle>Terjadi kesalahan!</AlertTitle>
+                  <AlertDescription>{errorMessage}</AlertDescription>
+                </Alert>
+              )}
 
-            <Button
-              className="mt-8"
-              onClick={() => login()}
-              disabled={isLoading}
-            >
-              {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              {isLoading ? "Mencoba masuk..." : "Masuk"}
-              {isLoading || <LogIn className="w-4 h-4 ml-2" />}
-            </Button>
+              <Button
+                className="mt-8"
+                onClick={() => login()}
+                disabled={isLoading}
+              >
+                {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                {isLoading ? "Mencoba masuk..." : "Masuk"}
+                {isLoading || <LogIn className="w-4 h-4 ml-2" />}
+              </Button>
+            </div>
           </div>
+        </div>
+
+        <div className="col-span-5 relative overflow-hidden border-r border">
+          <img
+            src="./bg-login.png"
+            className="absolute h-screen w-full object-cover grayscale hover:scale-110 duration-300 hover:grayscale-0"
+          />
         </div>
       </div>
     </>

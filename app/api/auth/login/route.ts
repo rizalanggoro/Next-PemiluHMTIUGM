@@ -21,6 +21,15 @@ export async function POST(request: Request) {
         statusText: "unauthorized",
       };
 
+    // check vote status
+    const voteResponse = await detaGet({ baseName: "votes", key: niu });
+    if (voteResponse.ok) {
+      throw <APIErrorInterface>{
+        status: 403,
+        statusText: "forbidden",
+      };
+    }
+
     const token = await tokenGenerate(json);
     cookies().set("voter-token", token, {
       maxAge: 60 * 60,
@@ -28,15 +37,6 @@ export async function POST(request: Request) {
     });
 
     return new Response("OK");
-
-    // return new Response("OK", {
-    //   headers: {
-    //     "set-cookie": serialize("voter-token", token, {
-    //       path: "/",
-    //       httpOnly: true,
-    //     }),
-    //   },
-    // });
   } catch (e) {
     const { status, statusText } = e as APIErrorInterface;
     return new Response(statusText, {

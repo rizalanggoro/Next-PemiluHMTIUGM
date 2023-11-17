@@ -21,7 +21,7 @@ export default async function Page() {
         <ThumbsUp className="animate-bounce mt-8 text-lime-600" />
         <p className="mt-4 mb-8">
           Terima kasih telah berpartisipasi dalam pemilihan Ketua dan Wakil
-          Ketua Himpunan Mahasiswa Teknik Industri.
+          Ketua Himpunan Mahasiswa Teknik Industri Universitas Gadjah Mada.
         </p>
 
         <a href="/">

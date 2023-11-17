@@ -1,6 +1,7 @@
 "use client";
 
 import Navbar from "@/components/navbar";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,13 +21,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { JWTVerifyResult } from "jose";
-import { CheckCheck } from "lucide-react";
+import { Box, CheckCheck, Loader2, Terminal } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function VoteClient(params: { token: JWTVerifyResult }) {
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const candidates: Array<{
-    imageUrl: string;
+    imageUrl?: string;
     title: string;
     description: string;
   }> = [
@@ -36,11 +40,36 @@ export default function VoteClient(params: { token: JWTVerifyResult }) {
       description: "Calon Ketua dan Wakil Ketua Himpunan Teknik Industri",
     },
     {
-      imageUrl: "/calon/1.jpg",
-      title: "Suara putih",
-      description: "Memilih untuk tidak memberikan suara",
+      title: "Kotak Kosong",
+      description: "",
     },
   ];
+
+  const router = useRouter();
+
+  const confirm = async () => {
+    setIsLoading(true);
+    setErrorMessage("");
+
+    const response = await fetch("/api/vote", {
+      method: "POST",
+      body: JSON.stringify({
+        vote: selectedIndex,
+        niu: `${(params.token.payload as any).niu}`,
+      }),
+    });
+
+    if (!response.ok) {
+      const messages: { [key: number]: string } = {
+        409: "Suara Anda telah digunakan sebelumnya!",
+      };
+      setErrorMessage(messages[response.status]);
+    } else {
+      router.replace("/thankyou");
+    }
+
+    setIsLoading(false);
+  };
 
   return (
     <>
@@ -55,7 +84,7 @@ export default function VoteClient(params: { token: JWTVerifyResult }) {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Konfirmasi Pilihan Anda</DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="text-slate-600">
                 Saya{" "}
                 <span className="font-semibold">
                   {(params.token.payload as any).name}
@@ -71,11 +100,23 @@ export default function VoteClient(params: { token: JWTVerifyResult }) {
                 sebagai Ketua dan Wakil Ketua Himpunan Mahasiswa Teknik
                 Industri.
               </DialogDescription>
+
+              {errorMessage && (
+                <Alert variant={"destructive"}>
+                  <Terminal className="h-4 w-4" />
+                  <AlertTitle>Terjadi kesalahan!</AlertTitle>
+                  <AlertDescription>{errorMessage}</AlertDescription>
+                </Alert>
+              )}
             </DialogHeader>
             <DialogFooter>
-              <Button>
-                <CheckCheck className="w-4 h-4 mr-2" />
-                Konfirmasi
+              <Button onClick={() => confirm()} disabled={isLoading}>
+                {isLoading ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <CheckCheck className="w-4 h-4 mr-2" />
+                )}
+                {isLoading ? "Menyimpan suara..." : "Konfirmasi"}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -90,14 +131,28 @@ export default function VoteClient(params: { token: JWTVerifyResult }) {
           <br />
           Silahkan tentukan pilihanmu
         </p>
-        <div className="grid grid-cols-2 gap-4 mt-4">
+        <div className="grid grid-cols-2 gap-4 my-4">
           {candidates.map((item, index) => (
             <Card
               className="overflow-hidden flex flex-col h-full"
               key={item.title}
             >
               <CardHeader className="px-0 pt-0">
-                <img src={item.imageUrl} className="h-72 object-cover" />
+                <div className="relative w-full">
+                  {item.imageUrl ? (
+                    <img
+                      src={item.imageUrl}
+                      className="h-72 object-cover w-full"
+                    />
+                  ) : (
+                    <div className="h-72 border-b bg-slate-100 flex items-center justify-center">
+                      <Box className="w-24 h-24 text-slate-300" />
+                    </div>
+                  )}
+                  <div className="relative flex items-center justify-center h-12 w-12 bg-primary -mt-6 mx-auto rounded-full border-white border-[3px]">
+                    <p className="text-white font-bold">{index + 1}</p>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent className="flex-1">
                 <CardTitle className="leading-tight">{item.title}</CardTitle>
