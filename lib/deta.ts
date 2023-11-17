@@ -78,4 +78,11 @@ const detaQuery = async (params: { baseName: string; payload: any }) => {
   }
 };
 
-export { detaGet, detaInsert, detaQuery };
+const detaDelete = async (params: { baseName: string; key: string }) => {
+  return await fetch(detaBaseUrl + params.baseName + "/items/" + params.key, {
+    method: "DELETE",
+    headers,
+  });
+};
+
+export { detaDelete, detaGet, detaInsert, detaQuery };

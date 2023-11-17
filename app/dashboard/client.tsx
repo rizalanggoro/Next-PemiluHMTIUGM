@@ -38,6 +38,18 @@ export default function DashboardClient() {
     "Kotak Kosong",
   ];
 
+  const resetVotes = async () => {
+    for (let a = 0; a < votes.length; a++) {
+      const vote = votes[a];
+      const response = await fetch("/api/dashboard/vote?key=" + vote.key, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        console.log(vote.niu + " deleted!");
+      }
+    }
+  };
+
   useEffect(() => {
     setIsLoadingFetchData(true);
 
@@ -88,7 +100,9 @@ export default function DashboardClient() {
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
-              <Button variant={"destructive"}>Ya, saya yakin</Button>
+              <Button variant={"destructive"} onClick={() => resetVotes()}>
+                Ya, saya yakin
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
