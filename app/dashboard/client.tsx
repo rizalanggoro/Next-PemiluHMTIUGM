@@ -81,7 +81,7 @@ export default function DashboardClient() {
       <div className="flex items-center justify-between">
         <p className="text-3xl font-semibold">Hasil Pemilihan</p>
         <Dialog>
-          <DialogTrigger disabled={votes.length == 0}>
+          <DialogTrigger disabled={votes.length == 0} asChild>
             <Button
               variant={"destructive"}
               className="mt-4"

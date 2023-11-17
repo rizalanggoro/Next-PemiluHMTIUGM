@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -9,6 +10,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/components/ui/use-toast";
+import { Copy } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function DashboardVoterClient() {
@@ -16,6 +20,7 @@ export default function DashboardVoterClient() {
     Array<{ key: string; name: string; niu: number; accessCode: string }>
   >([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     const loadVoters = async () => {
@@ -36,9 +41,34 @@ export default function DashboardVoterClient() {
     loadVoters();
   }, [voters]);
 
+  const copyJSON = async () => {
+    await navigator.clipboard.writeText(
+      JSON.stringify(
+        voters.map((item) => {
+          return {
+            NIU: item.niu,
+            Nama: item.name,
+            "Kode Akses": item.accessCode,
+          };
+        })
+      )
+    );
+    toast({
+      title: "JSON pemilih berhasil di-copy ke clipboard!",
+    });
+  };
+
   return (
     <>
-      <p className="text-2xl font-bold">Daftar pemilih</p>
+      <Toaster />
+
+      <div className="flex items-center justify-between">
+        <p className="text-3xl font-bold">Daftar pemilih</p>
+        <Button onClick={() => copyJSON()}>
+          <Copy className="w-4 h-4 mr-2" />
+          Copy JSON
+        </Button>
+      </div>
 
       <Table className="mt-4">
         <TableCaption>
