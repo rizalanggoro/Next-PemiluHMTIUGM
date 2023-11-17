@@ -2,7 +2,7 @@
 
 import Navbar from "@/components/navbar";
 import { Button } from "@/components/ui/button";
-import { Home, Users2, Vote } from "lucide-react";
+import { Users2, Vote } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 type DashboardMenuItem = {
@@ -17,7 +17,11 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const dashboardMenus: Array<DashboardMenuItem> = [
-    { title: "Utama", href: "/dashboard", icon: <Home className="h-4 w-4" /> },
+    {
+      title: "Hasil pemilihan",
+      href: "/dashboard",
+      icon: <Vote className="h-4 w-4" />,
+    },
     {
       title: "Data pemilih",
       href: "/dashboard/voter",
@@ -28,11 +32,6 @@ export default function DashboardLayout({
     //   href: "/dashboard/voter/upload",
     //   icon: <UploadCloud className="h-4 w-4" />,
     // },
-    {
-      title: "Hasil pemilihan",
-      href: "/dashboard/result",
-      icon: <Vote className="h-4 w-4" />,
-    },
   ];
 
   const pathname = usePathname();
@@ -42,7 +41,7 @@ export default function DashboardLayout({
       <Navbar />
 
       {/* content */}
-      <div className="grid grid-cols-12 pt-16 px-4 mx-auto max-w-[1024px] gap-4 my-4">
+      <div className="grid grid-cols-12 pt-[4.375rem] px-4 mx-auto max-w-[1024px] gap-8 my-8">
         {/* dashboard menus */}
         <div className="col-span-3 flex flex-col text-left gap-2">
           {dashboardMenus.map((item) => (

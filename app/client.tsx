@@ -7,14 +7,10 @@ import { Loader2, LogIn } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-interface LoginErrorMessage {
-  [key: number]: string;
-}
-
 export default function HomeClient() {
   const [voter, setVoter] = useState({
-    niu: "523175",
-    accessCode: "9ZO1NX",
+    niu: "",
+    accessCode: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -35,7 +31,7 @@ export default function HomeClient() {
       router.replace("/vote");
     } else {
       const { status } = response;
-      const messages: LoginErrorMessage = {
+      const messages: { [key: number]: string } = {
         404: "Akun dengan NIU tersebut tidak ditemukan!",
         401: "Kode akses yang Anda masukkan tidak valid!",
         403: "Suara Anda telah digunakan sebelumnya!",
@@ -54,8 +50,9 @@ export default function HomeClient() {
   return (
     <>
       <div className="grid grid-cols-12 h-screen overflow-hidden">
-        <div className="col-span-7 flex items-center">
-          <div className="px-8 max-w-[768px] mx-auto w-full">
+        <div className="col-span-1"></div>
+        <div className="col-span-5 flex items-center">
+          <div className="w-full">
             <div className="flex gap-4 absolute top-0 my-8">
               {listLogo.map((item) => (
                 <img src={item.href} className="h-8 object-contain" />
@@ -68,7 +65,7 @@ export default function HomeClient() {
             <p className="mt-4 text-lg text-slate-600">
               Masukkan NIU dan kode akses untuk melanjutkan
             </p>
-            <div className="max-w-[512px]">
+            <div className="max-w-[480px]">
               <Input
                 className="mt-8 w-full"
                 value={voter.niu}
@@ -115,12 +112,13 @@ export default function HomeClient() {
           </div>
         </div>
 
-        <div className="col-span-5 relative overflow-hidden border-r border">
+        <div className="col-span-5 relative overflow-hidden border-r border shadow-2xl">
           <img
             src="./bg-login.png"
-            className="absolute h-screen w-full object-cover grayscale hover:scale-110 duration-300 hover:grayscale-0"
+            className="absolute h-screen w-full object-cover grayscale hover:scale-105 duration-300 hover:grayscale-0"
           />
         </div>
+        <div className="col-span-1"></div>
       </div>
     </>
   );
