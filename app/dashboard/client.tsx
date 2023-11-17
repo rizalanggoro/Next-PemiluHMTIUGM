@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Loader2, RotateCcw } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function DashboardClient() {
@@ -31,41 +31,38 @@ export default function DashboardClient() {
       niu: string;
     }>
   >([]);
-  const [isLoadingFetchData, setIsLoadingFetchData] = useState(false);
-  const [isFetchDataEnd, setIsFetchDataEnd] = useState(false);
+  const [isLoadingFetchData, setIsLoadingFetchData] = useState(true);
 
   const candidates = [
     "Farras Maula Audina, Emmanuel Oke Cahyo Widiyanto",
     "Kotak Kosong",
   ];
 
-  const fetchData = async () => {
+  useEffect(() => {
     setIsLoadingFetchData(true);
 
-    let url = "/api/dashboard/vote";
-    if (votes.length > 0) {
-      url = url + "?lastkey=" + votes[votes.length - 1].key;
-    }
-
-    const response = await fetch(url, {
-      method: "GET",
-    });
-
-    if (response.ok) {
-      const json = await response.json();
-      if ((json.items as Array<any>).length == 0) {
-        setIsFetchDataEnd(true);
-      } else {
-        setVotes([...votes, ...json.items]);
+    const fetchData = async () => {
+      let url = "/api/dashboard/vote";
+      if (votes.length > 0) {
+        url = url + "?lastkey=" + votes[votes.length - 1].key;
       }
-    }
 
-    setIsLoadingFetchData(false);
-  };
+      const response = await fetch(url, {
+        method: "GET",
+      });
 
-  useEffect(() => {
+      if (response.ok) {
+        const json = await response.json();
+        if ((json.items as Array<any>).length == 0) {
+          setIsLoadingFetchData(false);
+        } else {
+          setVotes([...votes, ...json.items]);
+        }
+      }
+    };
+
     fetchData();
-  }, []);
+  }, [votes]);
 
   return (
     <>
@@ -127,18 +124,10 @@ export default function DashboardClient() {
       {/* table */}
       <Table className="mt-4 mb-8">
         <TableCaption>
-          <p>Terdapat {votes.length} suara</p>
-          {isFetchDataEnd || (
-            <Button
-              onClick={() => fetchData()}
-              className="mt-2"
-              disabled={isLoadingFetchData}
-            >
-              {isLoadingFetchData && (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              )}
-              {isLoadingFetchData ? "Mengambil data..." : "Muat lainnya"}
-            </Button>
+          {isLoadingFetchData ? (
+            <p>Memuat data suara...</p>
+          ) : (
+            <p>Terdapat {votes.length} suara</p>
           )}
         </TableCaption>
 

@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -10,32 +9,32 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function DashboardVoterClient() {
   const [voters, setVoters] = useState<
     Array<{ key: string; name: string; niu: number; accessCode: string }>
   >([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const loadVoters = async () => {
-    setIsLoading(true);
-    let url = "/api/dashboard/voter";
-    if (voters.length > 0) url += "?lastkey=" + voters[voters.length - 1].key;
-
-    const response = await fetch(url);
-
-    if (response.ok) {
-      const json = await response.json();
-      setVoters([...voters, ...json.items]);
-    }
-    setIsLoading(false);
-  };
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const loadVoters = async () => {
+      setIsLoading(true);
+      let url = "/api/dashboard/voter";
+      if (voters.length > 0) url += "?lastkey=" + voters[voters.length - 1].key;
+
+      const response = await fetch(url);
+
+      if (response.ok) {
+        const json = await response.json();
+        if ((json.items as Array<any>).length == 0) setIsLoading(false);
+        else setVoters([...voters, ...json.items]);
+      }
+      setIsLoading(false);
+    };
+
     loadVoters();
-  }, []);
+  }, [voters]);
 
   return (
     <>
@@ -43,15 +42,11 @@ export default function DashboardVoterClient() {
 
       <Table className="mt-4">
         <TableCaption>
-          <p>Terdapat {voters.length} pemilih</p>
-          <Button
-            onClick={() => loadVoters()}
-            className="mt-2"
-            disabled={isLoading}
-          >
-            {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            {isLoading ? "Mengambil data..." : "Muat lainnya"}
-          </Button>
+          {isLoading ? (
+            <p>Memuat data pemilih...</p>
+          ) : (
+            <p>Terdapat {voters.length} pemilih</p>
+          )}
         </TableCaption>
         <TableHeader>
           <TableRow>

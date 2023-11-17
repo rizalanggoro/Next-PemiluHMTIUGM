@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     baseName: "votes",
     payload: JSON.stringify({
       query: [],
-      limit: 1,
+      limit: 100,
       last: lastkey,
     }),
   });
