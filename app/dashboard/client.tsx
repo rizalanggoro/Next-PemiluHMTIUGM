@@ -21,6 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { RotateCcw } from "lucide-react";
+import Randomstring from "randomstring";
 import { useEffect, useState } from "react";
 
 export default function DashboardClient() {
@@ -31,27 +32,46 @@ export default function DashboardClient() {
       niu: string;
     }>
   >([]);
-  const [isLoadingFetchData, setIsLoadingFetchData] = useState(true);
+  const [isFetchingVotes, setIsFetchingVotes] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDialogResetOpen, setIsDialogResetOpen] = useState(false);
 
   const candidates = [
     "Farras Maula Audina, Emmanuel Oke Cahyo Widiyanto",
     "Kotak Kosong",
   ];
 
+  const dummyVotes = async () => {
+    for (let a = 0; a < 25; a++) {
+      const random = Math.floor(Math.random() * 2);
+      const response = await fetch("/api/vote", {
+        method: "POST",
+        body: JSON.stringify({
+          niu: Randomstring.generate({ length: 8 }),
+          vote: random,
+        }),
+      });
+      if (response.ok) console.log("done");
+    }
+  };
+
   const resetVotes = async () => {
+    setIsDeleting(true);
     for (let a = 0; a < votes.length; a++) {
       const vote = votes[a];
       const response = await fetch("/api/dashboard/vote?key=" + vote.key, {
         method: "DELETE",
       });
       if (response.ok) {
-        console.log(vote.niu + " deleted!");
+        console.log("suara ke-" + (a + 1) + " berhasil dihapus!");
       }
     }
+    setIsDialogResetOpen(false);
+    setIsDeleting(false);
   };
 
   useEffect(() => {
-    setIsLoadingFetchData(true);
+    setIsFetchingVotes(true);
 
     const fetchData = async () => {
       let url = "/api/dashboard/vote";
@@ -66,7 +86,7 @@ export default function DashboardClient() {
       if (response.ok) {
         const json = await response.json();
         if ((json.items as Array<any>).length == 0) {
-          setIsLoadingFetchData(false);
+          setIsFetchingVotes(false);
         } else {
           setVotes([...votes, ...json.items]);
         }
@@ -80,7 +100,8 @@ export default function DashboardClient() {
     <>
       <div className="flex items-center justify-between">
         <p className="text-3xl font-semibold">Hasil Pemilihan</p>
-        <Dialog>
+        {/* <button onClick={() => dummyVotes()}>Dummy votes</button> */}
+        <Dialog open={isDialogResetOpen} onOpenChange={setIsDialogResetOpen}>
           <DialogTrigger disabled={votes.length == 0} asChild>
             <Button
               variant={"destructive"}
@@ -100,8 +121,12 @@ export default function DashboardClient() {
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
-              <Button variant={"destructive"} onClick={() => resetVotes()}>
-                Ya, saya yakin
+              <Button
+                disabled={isDeleting}
+                variant={"destructive"}
+                onClick={() => resetVotes()}
+              >
+                {isDeleting ? "Menghapus suara..." : "Ya, saya yakin"}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -138,7 +163,7 @@ export default function DashboardClient() {
       {/* table */}
       <Table className="mt-4 mb-8">
         <TableCaption>
-          {isLoadingFetchData ? (
+          {isFetchingVotes ? (
             <p>Memuat data suara...</p>
           ) : (
             <p>Terdapat {votes.length} suara</p>
