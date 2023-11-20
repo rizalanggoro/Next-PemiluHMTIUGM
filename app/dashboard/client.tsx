@@ -1,7 +1,14 @@
 "use client";
 
+import { ComponentChart } from "@/components/chart";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +31,11 @@ import { RotateCcw } from "lucide-react";
 import Randomstring from "randomstring";
 import { useEffect, useState } from "react";
 
+interface InterfaceStatisticItem {
+  title: string;
+  voterCount: number;
+}
+
 export default function DashboardClient() {
   const [votes, setVotes] = useState<
     Array<{
@@ -35,6 +47,40 @@ export default function DashboardClient() {
   const [isFetchingVotes, setIsFetchingVotes] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDialogResetOpen, setIsDialogResetOpen] = useState(false);
+
+  const statistics: Array<InterfaceStatisticItem> = [
+    {
+      title: "Angkatan 2023",
+      voterCount: 145,
+    },
+    {
+      title: "Angkatan 2022",
+      voterCount: 99,
+    },
+    {
+      title: "Angkatan 2021",
+      voterCount: 81,
+    },
+    {
+      title: "Angkatan 2020-2017",
+      voterCount: 168,
+    },
+  ];
+
+  const niuMap: { [key: number]: any } = {
+    2023: { bottom: 512045, top: 523332 },
+    2022: { bottom: 492667, top: 506020 },
+    2021: { bottom: 472933, top: 482952 },
+    2020: { bottom: 410292, top: 463419 },
+  };
+
+  const getVotedCount = (key: number): number => {
+    return votes.filter(
+      (item) =>
+        Number(item.niu) <= niuMap[key].top &&
+        Number(item.niu) >= niuMap[key].bottom
+    ).length;
+  };
 
   const candidates = [
     "Farras Maula Audina, Emmanuel Oke Cahyo Widiyanto",
@@ -102,12 +148,8 @@ export default function DashboardClient() {
         <p className="text-3xl font-semibold">Hasil Pemilihan</p>
         {/* <button onClick={() => dummyVotes()}>Dummy votes</button> */}
         <Dialog open={isDialogResetOpen} onOpenChange={setIsDialogResetOpen}>
-          <DialogTrigger disabled={votes.length == 0} asChild>
-            <Button
-              variant={"destructive"}
-              className="mt-4"
-              disabled={votes.length == 0}
-            >
+          <DialogTrigger disabled={true} asChild>
+            <Button variant={"destructive"} className="mt-4" disabled={true}>
               <RotateCcw className="w-4 h-4 mr-2" />
               Reset
             </Button>
@@ -159,6 +201,64 @@ export default function DashboardClient() {
           </div>
         </CardContent>
       </Card>
+
+      <p className="text-xl font-semibold mt-8">
+        Statistik Pemilih Tiap Angkatan
+      </p>
+
+      <div className="grid grid-cols-2 gap-4 mt-4">
+        {[2023, 2022, 2021, 2020].map((item, index) => (
+          <Card key={"card-statistic-" + index} className="text-center">
+            <CardHeader>
+              <p className="text-lg font-semibold text-primary">
+                {statistics[index].title}
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="max-w-[240px] max-h-[240px] mx-auto">
+                <ComponentChart
+                  lables={["Sudah", "Belum"]}
+                  data={[
+                    getVotedCount(item),
+                    statistics[index].voterCount - getVotedCount(item),
+                  ]}
+                  backgroundColor={["#366078", "#e5e7eb"]}
+                  borderColor={["#366078", "#9ca3af"]}
+                />
+              </div>
+              <CardDescription className="mt-4">
+                Total pemilih:{" "}
+                <span className="font-semibold">
+                  {statistics[index].voterCount}
+                </span>
+              </CardDescription>
+              <CardDescription>
+                Total memilih:{" "}
+                <span className="font-semibold">
+                  {getVotedCount(item)} (
+                  {(
+                    (getVotedCount(item) / statistics[index].voterCount) *
+                    100
+                  ).toFixed(1)}
+                  %)
+                </span>
+              </CardDescription>
+              <CardDescription>
+                Total belum memilih:{" "}
+                <span className="font-semibold">
+                  {statistics[index].voterCount - getVotedCount(item)} (
+                  {(
+                    ((statistics[index].voterCount - getVotedCount(item)) /
+                      statistics[index].voterCount) *
+                    100
+                  ).toFixed(1)}
+                  %)
+                </span>
+              </CardDescription>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
       {/* table */}
       <Table className="mt-4 mb-8">
