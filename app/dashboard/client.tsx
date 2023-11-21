@@ -23,6 +23,7 @@ import {
   TableBody,
   TableCaption,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -116,6 +117,19 @@ export default function DashboardClient() {
     setIsDeleting(false);
   };
 
+  const getVotesCount = (category: number): number => {
+    if (category == 1) {
+      // candidate 1
+      return votes.filter((item) => item.vote == 0).length;
+    } else if (category == 2) {
+      // candidate 2
+      return votes.filter((item) => item.vote == 1).length;
+    } else {
+      // absent
+      return 493 - votes.length;
+    }
+  };
+
   useEffect(() => {
     setIsFetchingVotes(true);
 
@@ -202,6 +216,73 @@ export default function DashboardClient() {
         </CardContent>
       </Card>
 
+      <Card className="mt-4">
+        <CardHeader>
+          <CardTitle>Grafik Perolehan Suara</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-12 gap-4">
+            <div className="col-span-7">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Keterangan</TableHead>
+                    <TableHead className="text-center">Suara</TableHead>
+                    <TableHead className="text-center">Persentase</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>Kandidat 1</TableCell>
+                    <TableCell className="text-center">
+                      {getVotesCount(1)}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {((getVotesCount(1) / 493) * 100).toFixed(1)}%
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Kandidat 2</TableCell>
+                    <TableCell className="text-center">
+                      {getVotesCount(2)}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {" "}
+                      {((getVotesCount(2) / 493) * 100).toFixed(1)}%
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Tidak memilih</TableCell>
+                    <TableCell className="text-center">
+                      {getVotesCount(3)}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {" "}
+                      {((getVotesCount(3) / 493) * 100).toFixed(1)}%
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+                <TableFooter className="text-primary">
+                  <TableRow className="bg-[#e5e7eb]">
+                    <TableCell>Total</TableCell>
+                    <TableCell className="text-center">493</TableCell>
+                    <TableCell className="text-center">100.0%</TableCell>
+                  </TableRow>
+                </TableFooter>
+              </Table>
+            </div>
+            <div className="col-span-5 flex justify-center">
+              <ComponentChart
+                lables={["Kandidat 1", "Kandidat 2", "Tidak memilih"]}
+                data={[getVotesCount(1), getVotesCount(2), getVotesCount(3)]}
+                backgroundColor={["#366078", "#264354", "#e5e7eb"]}
+                borderColor={["#366078", "#264354", "#9ca3af"]}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <p className="text-xl font-semibold mt-8">
         Statistik Pemilih Tiap Angkatan
       </p>
@@ -215,7 +296,7 @@ export default function DashboardClient() {
               </p>
             </CardHeader>
             <CardContent>
-              <div className="max-w-[240px] max-h-[240px] mx-auto">
+              <div className="max-w-[200px] mx-auto flex justify-center">
                 <ComponentChart
                   lables={["Sudah", "Belum"]}
                   data={[
